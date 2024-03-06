@@ -147,7 +147,7 @@ N <- 17
 x <- runif(N)
 write.table(x, file = "coords.txt", col.names = FALSE)
 
-x <- as.numeric(readLines("coords.txt")$V1)
+x <- as.numeric(readLines("pr1/coords.txt")$V1)
 
 first_diff <- diff(x, differences = 1)
 second_diff <- diff(x, differences = 2)

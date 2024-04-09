@@ -1,4 +1,5 @@
 library('readxl')
+library(dplyr)
 
 #task 1
 df_xl <- read_excel(
@@ -31,12 +32,23 @@ df_xl_2018 <- subset(df_xl, substring(date, 1,4) == '2018')
 df_xl_wth_111 <- subset(df_xl, ID == '111')
 
 #task 8
-unique_ids <- unique(subset(df_xl, water < 2)$ID)
-print(unique_ids)
+
+unique_ids = df_xl %>%
+  group_by(ID) %>%
+  summarize(max_water = max(water)) %>%
+  filter(max_water < 2) %>%
+  pull(ID)
+
+unique_ids
 
 #task 9
-print(unique(subset(df_xl, water + gas + condensate >= 1000)$ID))
-print(length(subset(df_xl, water + gas + condensate >= 1000)$ID) == length(df_xl))
+
+daily = df_xl %>%
+  group_by(ID) %>%
+  filter(all(water + gas + condensate >= 1000)) %>%
+  pull(ID)
+
+unique(daily)
 
 #task 10
 df_xl_2018$sum <- df_xl_2018$gas + df_xl_2018$condensate + df_xl_2018$water
@@ -46,7 +58,7 @@ print(subset(df_xl_2018, sum == max(sum))$tree)
 print(subset(df_xl_2018, water == max(water))$tree)
 
 #task 12
-library(dplyr)
+
 
 mean_gas_water <- df_xl %>%
   subset(gas_water$gas != Inf) %>%

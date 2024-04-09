@@ -11,7 +11,7 @@
 
 <meta name="author" content="ARSENII" />
 
-<meta name="date" content="2024-03-30" />
+<meta name="date" content="2024-04-07" />
 
 <title>practice_4.R</title>
 
@@ -352,20 +352,29 @@ display: none;
 
 <h1 class="title toc-ignore">practice_4.R</h1>
 <h4 class="author">ARSENII</h4>
-<h4 class="date">2024-03-30</h4>
+<h4 class="date">2024-04-07</h4>
 
 </div>
 
 
 <pre class="r"><code>library(&#39;readxl&#39;)</code></pre>
 <pre><code>## Warning: package &#39;readxl&#39; was built under R version 4.3.3</code></pre>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>#task 1
 df_xl &lt;- read_excel(
   &#39;GAZ.xlsx&#39;,
   col_types = c(&#39;date&#39;, &#39;numeric&#39;, &#39;numeric&#39;, &#39;numeric&#39;, &#39;numeric&#39;, &#39;numeric&#39;, &#39;text&#39;, &#39;text&#39;, &#39;text&#39;)
 )</code></pre>
 
-<pre><code>## Warning: Expecting numeric in C27812 / R27812C3: got &#39;NULL&#39;</code></pre>
 <pre class="r"><code>colnames(df_xl) &lt;- c(&#39;date&#39;, &#39;p&#39;, &#39;temp&#39;, &#39;gas&#39;, &#39;condensate&#39;, &#39;water&#39;, &#39;ID&#39;, &#39;tree&#39;, &#39;group&#39;) 
 
 #task 2
@@ -391,29 +400,30 @@ df_xl_2018 &lt;- subset(df_xl, substring(date, 1,4) == &#39;2018&#39;)
 df_xl_wth_111 &lt;- subset(df_xl, ID == &#39;111&#39;)
 
 #task 8
-unique_ids &lt;- unique(subset(df_xl, water &lt; 2)$ID)
-print(unique_ids)</code></pre>
-<pre><code>##  [1] &quot;110&quot;  &quot;111&quot;  &quot;112&quot;  &quot;113&quot;  &quot;114&quot;  &quot;115&quot;  &quot;118&quot;  &quot;100&quot;  &quot;101&quot;  &quot;105&quot; 
-## [11] &quot;109&quot;  &quot;102&quot;  &quot;103&quot;  &quot;104&quot;  &quot;106&quot;  &quot;107&quot;  &quot;7&quot;    &quot;162&quot;  &quot;163&quot;  &quot;164&quot; 
-## [21] &quot;165&quot;  &quot;1044&quot; &quot;1045&quot; &quot;1046&quot; &quot;1047&quot; &quot;1048&quot; &quot;1049&quot; &quot;1050&quot; &quot;1051&quot; &quot;1052&quot;
-## [31] &quot;1053&quot; &quot;1054&quot; &quot;1008&quot; &quot;1009&quot; &quot;1010&quot; &quot;1011&quot; &quot;1012&quot; &quot;1013&quot; &quot;1015&quot; &quot;1018&quot;
-## [41] &quot;1055&quot; &quot;1056&quot; &quot;1014&quot; &quot;1016&quot; &quot;1019&quot; &quot;1023&quot; &quot;1017&quot; &quot;1020&quot; &quot;1021&quot; &quot;1057&quot;
-## [51] &quot;161&quot;  &quot;171&quot;  &quot;173G&quot; &quot;1025&quot; &quot;1026&quot; &quot;17B&quot;  &quot;18B&quot;  &quot;20B&quot;  &quot;302&quot;  &quot;242&quot; 
-## [61] &quot;1027&quot; &quot;1058&quot; &quot;301&quot;  &quot;1022&quot; &quot;1024&quot; &quot;305&quot;  &quot;306&quot;  &quot;1030&quot; &quot;1031&quot; &quot;1081&quot;
-## [71] &quot;1035&quot; &quot;1036&quot; &quot;1038&quot; &quot;1039&quot; &quot;1034&quot; &quot;1037&quot; &quot;1040&quot; &quot;1041&quot; &quot;1042&quot; &quot;1043&quot;</code></pre>
+
+unique_ids = df_xl %&gt;%
+  group_by(ID) %&gt;%
+  summarize(max_water = max(water)) %&gt;%
+  filter(max_water &lt; 2) %&gt;%
+  pull(ID)
+
+unique_ids</code></pre>
+<pre><code>## [1] &quot;1010&quot; &quot;1024&quot; &quot;103&quot;  &quot;107&quot;  &quot;109&quot;  &quot;118&quot;  &quot;165&quot;</code></pre>
 <pre class="r"><code>#task 9
-print(unique(subset(df_xl, water + gas + condensate &gt;= 1000)$ID))</code></pre>
-<pre><code>##  [1] &quot;110&quot;  &quot;111&quot;  &quot;112&quot;  &quot;113&quot;  &quot;114&quot;  &quot;115&quot;  &quot;118&quot;  &quot;100&quot;  &quot;101&quot;  &quot;105&quot; 
-## [11] &quot;109&quot;  &quot;102&quot;  &quot;103&quot;  &quot;104&quot;  &quot;106&quot;  &quot;107&quot;  &quot;7&quot;    &quot;160&quot;  &quot;162&quot;  &quot;163&quot; 
-## [21] &quot;164&quot;  &quot;165&quot;  &quot;1044&quot; &quot;1045&quot; &quot;1046&quot; &quot;1047&quot; &quot;1048&quot; &quot;1049&quot; &quot;1050&quot; &quot;1051&quot;
-## [31] &quot;1052&quot; &quot;1053&quot; &quot;1054&quot; &quot;1008&quot; &quot;1009&quot; &quot;1010&quot; &quot;1011&quot; &quot;1012&quot; &quot;1013&quot; &quot;1015&quot;
-## [41] &quot;1018&quot; &quot;1055&quot; &quot;1056&quot; &quot;1014&quot; &quot;1016&quot; &quot;1019&quot; &quot;1023&quot; &quot;1017&quot; &quot;1020&quot; &quot;1021&quot;
-## [51] &quot;1057&quot; &quot;161&quot;  &quot;171&quot;  &quot;173G&quot; &quot;1025&quot; &quot;1026&quot; &quot;17B&quot;  &quot;18B&quot;  &quot;20B&quot;  &quot;302&quot; 
-## [61] &quot;242&quot;  &quot;1027&quot; &quot;1058&quot; &quot;301&quot;  &quot;1022&quot; &quot;1024&quot; &quot;305&quot;  &quot;306&quot;  &quot;1030&quot; &quot;1031&quot;
-## [71] &quot;1081&quot; &quot;1035&quot; &quot;1036&quot; &quot;1038&quot; &quot;1039&quot; &quot;1034&quot; &quot;1037&quot; &quot;1040&quot; &quot;1041&quot; &quot;1042&quot;
-## [81] &quot;1043&quot;</code></pre>
-<pre class="r"><code>print(length(subset(df_xl, water + gas + condensate &gt;= 1000)$ID) == length(df_xl))</code></pre>
-<pre><code>## [1] FALSE</code></pre>
+
+daily = df_xl %&gt;%
+  group_by(ID) %&gt;%
+  filter(all(water + gas + condensate &gt;= 1000)) %&gt;%
+  pull(ID)
+
+unique(daily)</code></pre>
+<pre><code>##  [1] &quot;111&quot;  &quot;114&quot;  &quot;101&quot;  &quot;105&quot;  &quot;109&quot;  &quot;102&quot;  &quot;103&quot;  &quot;104&quot;  &quot;106&quot;  &quot;7&quot;   
+## [11] &quot;160&quot;  &quot;162&quot;  &quot;163&quot;  &quot;164&quot;  &quot;165&quot;  &quot;1044&quot; &quot;1045&quot; &quot;1047&quot; &quot;1048&quot; &quot;1049&quot;
+## [21] &quot;1051&quot; &quot;1052&quot; &quot;1053&quot; &quot;1054&quot; &quot;1008&quot; &quot;1010&quot; &quot;1011&quot; &quot;1012&quot; &quot;1013&quot; &quot;1015&quot;
+## [31] &quot;1018&quot; &quot;1055&quot; &quot;1056&quot; &quot;1014&quot; &quot;1016&quot; &quot;1019&quot; &quot;1023&quot; &quot;1017&quot; &quot;1020&quot; &quot;1021&quot;
+## [41] &quot;1057&quot; &quot;161&quot;  &quot;171&quot;  &quot;173G&quot; &quot;1025&quot; &quot;1026&quot; &quot;17B&quot;  &quot;18B&quot;  &quot;20B&quot;  &quot;302&quot; 
+## [51] &quot;242&quot;  &quot;1027&quot; &quot;1058&quot; &quot;301&quot;  &quot;1022&quot; &quot;1024&quot; &quot;305&quot;  &quot;306&quot;  &quot;1030&quot; &quot;1031&quot;
+## [61] &quot;1081&quot; &quot;1036&quot; &quot;1038&quot; &quot;1039&quot; &quot;1034&quot; &quot;1037&quot; &quot;1040&quot; &quot;1041&quot; &quot;1043&quot;</code></pre>
 <pre class="r"><code>#task 10
 df_xl_2018$sum &lt;- df_xl_2018$gas + df_xl_2018$condensate + df_xl_2018$water
 print(subset(df_xl_2018, sum == max(sum))$tree)</code></pre>
@@ -422,17 +432,9 @@ print(subset(df_xl_2018, sum == max(sum))$tree)</code></pre>
 print(subset(df_xl_2018, water == max(water))$tree)</code></pre>
 <pre><code>## [1] &quot;КП 1&quot;</code></pre>
 <pre class="r"><code>#task 12
-library(dplyr)</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.3.3</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>mean_gas_water &lt;- df_xl %&gt;%
+
+
+mean_gas_water &lt;- df_xl %&gt;%
   subset(gas_water$gas != Inf) %&gt;%
   group_by(tree) %&gt;%
   summarise(mean_gas_water = mean(gas_water$gas, na.rm = TRUE))
